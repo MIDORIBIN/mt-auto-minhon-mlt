@@ -22,20 +22,20 @@ class Translator:
 
     def __get_support_languages(self) -> set[str]:
         url = f'{self.__DOMAIN}/api/mt_standard/get/'
-        data = dict(
+        request_data = dict(
             key=self.__client_id,
             name=self.__user_name,
             type='json',
             limit=2000,
             access_token=self.__access_token,
         )
-        response = json.loads(self.__request(url, data=data))
+        response = self.__request(url, data=request_data)
         return {e['lang_s'] for e in response['resultset']['result']['list']}
 
     def translate_text(self, text: str, source_lang: str, target_lang: str) -> str:
         self.__check(text, source_lang, target_lang)
 
-        data = dict(
+        request_data = dict(
             key=self.__client_id,
             name=self.__user_name,
             type='json',
@@ -43,7 +43,7 @@ class Translator:
             text=text,
         )
         url = f'{self.__DOMAIN}/api/mt/generalNT_{source_lang}_{target_lang}/'
-        response = json.loads(self.__request(url, data=data))
+        response = self.__request(url, data=request_data)
         return response['resultset']['result']['text']
 
     def __check(self, text: str, source_lang: str, target_lang: str):
@@ -59,18 +59,19 @@ class Translator:
 
     @classmethod
     def __get_access_token(cls, client_id: str, client_secret: str) -> str:
+        url = f'{cls.__DOMAIN}/oauth2/token.php'
         client_data = {
             'grant_type': 'client_credentials',
             'client_id': client_id,
             'client_secret': client_secret,
         }
-        url = f'{cls.__DOMAIN}/oauth2/token.php'
-        response = json.loads(cls.__request(url, data=client_data))
+        response = cls.__request(url, data=client_data)
         return response['access_token']
 
     @staticmethod
-    def __request(url: str, data: dict[str, str]) -> str:
+    def __request(url: str, data: dict[str, str]) -> dict:
         request_object = Request(url, urlencode(data).encode('ascii'), method='POST')
 
         with urllib.request.urlopen(request_object) as response:
-            return response.read().decode('utf-8')
+            response_body = response.read().decode('utf-8')
+            return json.loads(response_body)

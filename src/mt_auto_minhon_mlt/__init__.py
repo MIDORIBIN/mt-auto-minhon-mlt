@@ -1,1 +1,1 @@
-from mt_auto_minhon_mlt.tranlator import Translator
+from .tranlator import Translator
