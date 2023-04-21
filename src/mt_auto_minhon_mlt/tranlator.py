@@ -1,11 +1,28 @@
 import json
 import urllib
+from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request
 
 
+def load_support_translate() -> list[tuple[str, str, str]]:
+    path = Path(__file__).parent / 'assets/support_translate.json'
+    with open(path, encoding='utf-8') as f:
+        support_languages = json.load(f)
+    return [tuple(support_language) for support_language in support_languages]
+
+
+def request(url: str, data: dict[str, str]) -> dict:
+    request_object = Request(url, urlencode(data).encode('ascii'), method='POST')
+
+    with urllib.request.urlopen(request_object) as response:
+        response_body = response.read().decode('utf-8')
+        return json.loads(response_body)
+
+
 class Translator:
     __DOMAIN = 'https://mt-auto-minhon-mlt.ucri.jgn-x.jp'
+    __SUPPORT_TRANSLATE = load_support_translate()
 
     def __init__(self, client_id: str, client_secret: str, user_name: str):
         self.__client_id = client_id
@@ -14,26 +31,9 @@ class Translator:
             client_id=client_id,
             client_secret=client_secret,
         )
-        self.__support_languages = self.__get_support_languages()
 
-    @property
-    def support_languages(self) -> set[str]:
-        return self.__support_languages
-
-    def __get_support_languages(self) -> set[str]:
-        url = f'{self.__DOMAIN}/api/mt_standard/get/'
-        request_data = dict(
-            key=self.__client_id,
-            name=self.__user_name,
-            type='json',
-            limit=2000,
-            access_token=self.__access_token,
-        )
-        response = self.__request(url, data=request_data)
-        return {e['lang_s'] for e in response['resultset']['result']['list']}
-
-    def translate_text(self, text: str, source_lang: str, target_lang: str) -> str:
-        self.__check(text, source_lang, target_lang)
+    def translate_text(self, text: str, source_lang: str, target_lang: str, translate_type: str = 'generalNT') -> str:
+        self.__check(text, translate_type, source_lang, target_lang)
 
         request_data = dict(
             key=self.__client_id,
@@ -42,20 +42,20 @@ class Translator:
             access_token=self.__access_token,
             text=text,
         )
-        url = f'{self.__DOMAIN}/api/mt/generalNT_{source_lang}_{target_lang}/'
-        response = self.__request(url, data=request_data)
+        url = f'{self.__DOMAIN}/api/mt/{translate_type}_{source_lang}_{target_lang}/'
+        response = request(url, data=request_data)
         return response['resultset']['result']['text']
 
-    def __check(self, text: str, source_lang: str, target_lang: str):
-        if not self.__exist_lang(source_lang):
-            raise ValueError(f'doesn\'t exist source_lang: {source_lang}')
-        if not self.__exist_lang(target_lang):
-            raise ValueError(f'doesn\'t exist target_lang: {target_lang}')
+    def __check(self, text: str, translate_type: str, source_lang: str, target_lang: str):
+        if not self.__is_support_translate(translate_type, source_lang, target_lang):
+            raise ValueError(f'doesn\'t support. translate_type: {translate_type}, source_lang: {source_lang}'
+                             f', target_lang: {target_lang}')
         if text is None or text == '':
             raise ValueError('doesn\'t exist text')
 
-    def __exist_lang(self, lang: str):
-        return lang in self.support_languages
+    @classmethod
+    def __is_support_translate(cls, translate_type: str, src_lang: str, target_lang: str):
+        return (translate_type, src_lang, target_lang) in cls.__SUPPORT_TRANSLATE
 
     @classmethod
     def __get_access_token(cls, client_id: str, client_secret: str) -> str:
@@ -65,13 +65,5 @@ class Translator:
             'client_id': client_id,
             'client_secret': client_secret,
         }
-        response = cls.__request(url, data=client_data)
+        response = request(url, data=client_data)
         return response['access_token']
-
-    @staticmethod
-    def __request(url: str, data: dict[str, str]) -> dict:
-        request_object = Request(url, urlencode(data).encode('ascii'), method='POST')
-
-        with urllib.request.urlopen(request_object) as response:
-            response_body = response.read().decode('utf-8')
-            return json.loads(response_body)

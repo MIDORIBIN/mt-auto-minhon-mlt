@@ -5,3 +5,6 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mt-auto-minhon-mlt"
 version = "1.0.0"
+
+[tool.setuptools.package-data]
+mt_auto_minhon_mlt = ["assets/support_translate.json"]
