@@ -31,6 +31,7 @@ en_actual = translator.translate_text('みんなの自動翻訳', source_lang='j
 
 ## TODO
 
-- [ ] CI
+- [x] CI
+- [ ] linter, formatter
 - [ ] PyPI
 - [ ] CD
