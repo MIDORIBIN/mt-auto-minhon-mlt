@@ -1,5 +1,7 @@
 # みんなの自動翻訳 Python Library
 
+[![Python application](https://github.com/MIDORIBIN/mt-auto-minhon-mlt/actions/workflows/python-app.yml/badge.svg)](https://github.com/MIDORIBIN/mt-auto-minhon-mlt/actions/workflows/python-app.yml)
+
 ## インストール
 
 ```shell
@@ -31,7 +33,8 @@ en_actual = translator.translate_text('みんなの自動翻訳', source_lang='j
 
 ## TODO
 
-- [x] CI
-- [ ] linter, formatter
+- [x] ~~CI~~
+- [x] ~~linter, formatter~~
+- [ ] badge
 - [ ] PyPI
 - [ ] CD
