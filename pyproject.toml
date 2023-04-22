@@ -8,3 +8,17 @@ version = "1.0.0"
 
 [tool.setuptools.package-data]
 mt_auto_minhon_mlt = ["assets/support_translate.json"]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "pyproject-flake8"
+]
+
+[tool.black]
+target-version = ['py39']
+line-length = 119
+
+[tool.flake8]
+max-line-length = 119
+exclude = "venv"
