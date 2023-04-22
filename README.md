@@ -28,3 +28,9 @@ translator = Translator(
 )
 en_actual = translator.translate_text('みんなの自動翻訳', source_lang='ja', target_lang='en')
 ```
+
+## TODO
+
+- [ ] CI
+- [ ] PyPI
+- [ ] CD
