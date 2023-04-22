@@ -8,9 +8,9 @@ class TestTranslator(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.translator = Translator(
-            client_id=os.environ['client_id'],
-            client_secret=os.environ['client_secret'],
-            user_name=os.environ['user_name'],
+            client_id=os.environ['CLIENT_ID'],
+            client_secret=os.environ['CLIENT_SECRET'],
+            user_name=os.environ['USER_NAME'],
         )
 
     def test_translate_text(self):
