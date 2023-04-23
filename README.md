@@ -35,6 +35,9 @@ en_actual = translator.translate_text('みんなの自動翻訳', source_lang='j
 
 - [x] ~~CI~~
 - [x] ~~linter, formatter~~
-- [ ] badge
 - [ ] PyPI
 - [ ] CD
+- [ ] badge
+- [ ] CLI
+- [ ] docs
+- [ ] docs header
