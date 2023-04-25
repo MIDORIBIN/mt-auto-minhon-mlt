@@ -5,12 +5,12 @@
 ## インストール
 
 ```shell
-pip install git+https://github.com/MIDORIBIN/mt-auto-minhon-mlt.git
+pip install mt-auto-minhon-mlt
 ```
 
 ## 必要条件
 
-本ライブラリは、Python バージョン 3.9.7 でテストされています。
+本ライブラリは、Python 3.7, 3.8, 3.9, 3.10でテストされています。
 
 ## 使用法
 
@@ -35,10 +35,10 @@ en_actual = translator.translate_text('みんなの自動翻訳', source_lang='j
 
 - [x] ~~CI~~
 - [x] ~~linter, formatter~~
-- [ ] PyPI
+- [x] ~~PyPI~~
+- [x] ~~PyPI GitHub Actions~~
 - [ ] CD
 - [ ] badge
 - [ ] CLI
 - [ ] docs
 - [ ] docs header
-- [ ] PyPI GitHub Actions
