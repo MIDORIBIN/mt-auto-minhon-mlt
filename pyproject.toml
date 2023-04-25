@@ -5,10 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mt-auto-minhon-mlt"
 version = "1.0.1"
+readme = "README.md"
+description = "みんなの自動翻訳 Python Library"
 requires-python = ">=3.7, <3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -29,7 +30,7 @@ dev = [
 mt_auto_minhon_mlt = ["assets/support_translate.json"]
 
 [tool.black]
-target-version = ['py39']
+target-version = ['py37', 'py38', 'py39', 'py310']
 line-length = 119
 
 [tool.flake8]

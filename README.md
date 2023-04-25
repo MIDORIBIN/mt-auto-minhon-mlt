@@ -41,3 +41,4 @@ en_actual = translator.translate_text('みんなの自動翻訳', source_lang='j
 - [ ] CLI
 - [ ] docs
 - [ ] docs header
+- [ ] PyPI GitHub Actions
