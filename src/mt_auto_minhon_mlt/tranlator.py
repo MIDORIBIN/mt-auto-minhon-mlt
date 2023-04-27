@@ -14,10 +14,10 @@ def load_support_translate() -> list[tuple[str, str, str]]:
     return [tuple(support_language) for support_language in support_languages]
 
 
-def request(url: str, data: dict[str, str]) -> dict:
+def request(url: str, data: dict[str, str], timeout=10) -> dict:
     request_object = Request(url, urlencode(data).encode("ascii"), method="POST")
 
-    with urllib.request.urlopen(request_object) as response:
+    with urllib.request.urlopen(request_object, timeout=timeout) as response:
         response_body = response.read().decode("utf-8")
         return json.loads(response_body)
 
