@@ -46,6 +46,8 @@ class Translator:
         )
         url = f"{self.__DOMAIN}/api/mt/{translate_type}_{source_lang}_{target_lang}/"
         response = request(url, data=request_data)
+        if response["resultset"]["code"] != 0:
+            raise ValueError(f"code: {response['resultset']['code']}, message: \"{response['resultset']['message']}\"")
         return response["resultset"]["result"]["text"]
 
     def __check(self, text: str, translate_type: str, source_lang: str, target_lang: str):

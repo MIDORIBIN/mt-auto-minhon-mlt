@@ -30,3 +30,15 @@ class TestTranslator(TestCase):
             jp_text, translate_type="voicetraNT", source_lang="ja", target_lang="en"
         )
         self.assertEqual(en_expected, en_actual)
+
+    def test_translate_text_error(self):
+        translator = Translator(
+            client_id=os.environ["CLIENT_ID"],
+            client_secret=os.environ["CLIENT_SECRET"],
+            user_name="invalid user name",
+        )
+        jp_text = "みんなの自動翻訳"
+
+        with self.assertRaises(ValueError) as cm:
+            translator.translate_text(jp_text, source_lang="ja", target_lang="en")
+        self.assertEqual('code: 501, message: ""', str(cm.exception))
