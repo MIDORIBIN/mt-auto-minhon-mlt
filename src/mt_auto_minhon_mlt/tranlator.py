@@ -34,17 +34,58 @@ class Translator:
             client_secret=client_secret,
         )
 
-    def translate_text(self, text: str, source_lang: str, target_lang: str, translate_type: str = "generalNT") -> str:
+    def translate_text(
+        self,
+        text: str,
+        source_lang: str,
+        target_lang: str,
+        translate_type: str = "generalNT",
+        split: int = None,
+        history: int = None,
+        xml: int = None,
+        term_id: str | list[str] | int = None,
+        bilingual_id: str | list[str] | int = None,
+        log_use: int = None,
+        data: str | int = None,
+    ) -> str:
+        """
+        Translate text.
+
+        Args:
+            text: text to translate.
+            source_lang: source language.
+            target_lang: target language.
+            translate_type: translate type.
+            split: split text.
+            history: history.
+            xml: xml.
+            term_id: term id.
+            bilingual_id: bilingual id.
+            log_use: log use.
+            data: data.
+
+        Returns:
+            translated text.
+        """
         self.__check(text, translate_type, source_lang, target_lang)
 
+        url = f"{self.__DOMAIN}/api/mt/{translate_type}_{source_lang}_{target_lang}/"
         request_data = dict(
+            access_token=self.__access_token,
             key=self.__client_id,
             name=self.__user_name,
             type="json",
-            access_token=self.__access_token,
             text=text,
+            split=split,
+            history=history,
+            xml=xml,
+            term_id=term_id,
+            bilingual_id=bilingual_id,
+            log_use=log_use,
+            data=data,
         )
-        url = f"{self.__DOMAIN}/api/mt/{translate_type}_{source_lang}_{target_lang}/"
+        request_data = {k: v for k, v in request_data.items() if v is not None}
+
         response = request(url, data=request_data)
         if response["resultset"]["code"] != 0:
             raise ValueError(f"code: {response['resultset']['code']}, message: \"{response['resultset']['message']}\"")

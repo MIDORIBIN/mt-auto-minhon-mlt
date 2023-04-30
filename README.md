@@ -37,7 +37,7 @@ en_actual = translator.translate_text('みんなの自動翻訳', source_lang='j
 - [x] ~~linter, formatter~~
 - [x] ~~PyPI~~
 - [x] ~~PyPI GitHub Actions~~
-- [ ] support other parameter
+- [x] ~~support other parameter~~
 - [ ] support file
 - [ ] CD
 - [ ] badge
