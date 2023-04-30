@@ -51,21 +51,19 @@ class Translator:
         """
         Translate text.
 
-        Args:
-            text: text to translate.
-            source_lang: source language.
-            target_lang: target language.
-            translate_type: translate type.
-            split: split text.
-            history: history.
-            xml: xml.
-            term_id: term id.
-            bilingual_id: bilingual id.
-            log_use: log use.
-            data: data.
+        :param text: text to translate.
+        :param source_lang: source language.
+        :param target_lang: target language.
+        :param translate_type: translate type.
+        :param split: split text.
+        :param history: history.
+        :param xml: xml.
+        :param term_id: term id.
+        :param bilingual_id: bilingual id.
+        :param log_use: log use.
+        :param data: data.
 
-        Returns:
-            translated text.
+        :return: translated text.
         """
         self.__check(text, translate_type, source_lang, target_lang)
 
