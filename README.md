@@ -1,6 +1,14 @@
+![](docs/assets/header.png)
+
 # みんなの自動翻訳 Python Library
 
 [![Python application](https://github.com/MIDORIBIN/mt-auto-minhon-mlt/actions/workflows/python-app.yml/badge.svg)](https://github.com/MIDORIBIN/mt-auto-minhon-mlt/actions/workflows/python-app.yml)
+[![PyPI version](https://badge.fury.io/py/mt-auto-minhon-mlt.svg)](https://badge.fury.io/py/mt-auto-minhon-mlt)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mt-auto-minhon-mlt)](https://pypi.org/project/mt-auto-minhon-mlt/)
+
+「みんなの自動翻訳」をPythonから利用するためのライブラリです。  
+「みんなの自動翻訳」は日本語から英語、英語から日本語、そして多数の他の言語の間で自動翻訳を提供しています。  
+Pythonラッパーを使用することで、これらの翻訳機能をPythonプログラムから簡単に利用することができます。
 
 ## インストール
 
@@ -38,9 +46,10 @@ en_actual = translator.translate_text('みんなの自動翻訳', source_lang='j
 - [x] ~~PyPI~~
 - [x] ~~PyPI GitHub Actions~~
 - [x] ~~support other parameter~~
+- [x] ~~badge~~
+- [x] ~~docs~~
+- [x] ~~docs header~~
 - [ ] support file
 - [ ] CD
-- [ ] badge
 - [ ] CLI
-- [ ] docs
-- [ ] docs header
+
