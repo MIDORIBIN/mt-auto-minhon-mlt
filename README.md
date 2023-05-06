@@ -1,4 +1,4 @@
-![](docs/assets/header.png)
+![](https://raw.githubusercontent.com/MIDORIBIN/mt-auto-minhon-mlt/main/docs/assets/header.png)
 
 # みんなの自動翻訳 Python Library
 
