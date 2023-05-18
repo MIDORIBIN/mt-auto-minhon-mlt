@@ -2,6 +2,7 @@ import os
 from unittest import TestCase
 
 from src.mt_auto_minhon_mlt import Translator
+from src.mt_auto_minhon_mlt.tranlator import TranslateType
 
 
 class TestTranslator(TestCase):
@@ -27,7 +28,10 @@ class TestTranslator(TestCase):
         jp_text = "みんなの自動翻訳"
         en_expected = "Minna no Jido Hon'"
         en_actual = self.translator.translate_text(
-            jp_text, translate_type="voicetraNT", source_lang="ja", target_lang="en"
+            jp_text,
+            translate_type=TranslateType.GENERAL_NT,
+            source_lang="ja",
+            target_lang="en",
         )
         self.assertEqual(en_expected, en_actual)
 

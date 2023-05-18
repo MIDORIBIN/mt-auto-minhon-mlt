@@ -1,10 +1,24 @@
 from __future__ import annotations
 
 import json
-import urllib
+from enum import Enum
 from pathlib import Path
 from urllib.parse import urlencode
-from urllib.request import Request
+from urllib.request import Request, urlopen
+
+
+class TranslateType(str, Enum):
+    FSA_NT = "fsaNT"
+    SHORT_SNT = "shortSnt"
+    VOICETRA_NT = "voicetraNT"
+    PAT_ETC = "patETC"
+    LAWS_NT = "lawsNT"
+    GENERAL_PT = "generalPT"
+    PATENT_NT = "patentNT"
+    SCIENCE = "science"
+    FSA_GO_JP = "fsaGoJP"
+    MINNA_PE = "minnaPE"
+    GENERAL_NT = "generalNT"
 
 
 def load_support_translate() -> list[tuple[str, str, str]]:
@@ -14,32 +28,40 @@ def load_support_translate() -> list[tuple[str, str, str]]:
     return [tuple(support_language) for support_language in support_languages]
 
 
-def request(url: str, data: dict[str, str], timeout=10) -> dict:
+def send_request(url: str, data: dict[str, str], timeout=10) -> dict:
     request_object = Request(url, urlencode(data).encode("ascii"), method="POST")
 
-    with urllib.request.urlopen(request_object, timeout=timeout) as response:
+    with urlopen(request_object, timeout=timeout) as response:
         response_body = response.read().decode("utf-8")
-        return json.loads(response_body)
+    return json.loads(response_body)
 
 
 class Translator:
     __DOMAIN = "https://mt-auto-minhon-mlt.ucri.jgn-x.jp"
     __SUPPORT_TRANSLATE = load_support_translate()
 
-    def __init__(self, client_id: str, client_secret: str, user_name: str):
+    def __init__(self, client_id: str, client_secret: str, user_name: str) -> None:
         self.__client_id = client_id
         self.__user_name = user_name
-        self.__access_token = self.__get_access_token(
-            client_id=client_id,
-            client_secret=client_secret,
-        )
+        self.__access_token = self.__get_access_token(client_id, client_secret)
+
+    @classmethod
+    def __get_access_token(cls, client_id: str, client_secret: str) -> str:
+        url = f"{cls.__DOMAIN}/oauth2/token.php"
+        request_data = {
+            "grant_type": "client_credentials",
+            "client_id": client_id,
+            "client_secret": client_secret,
+        }
+        response_data = send_request(url, request_data)
+        return response_data["access_token"]
 
     def translate_text(
         self,
         text: str,
         source_lang: str,
         target_lang: str,
-        translate_type: str = "generalNT",
+        translate_type: TranslateType = TranslateType.GENERAL_NT,
         split: int = None,
         history: int = None,
         xml: int = None,
@@ -51,64 +73,55 @@ class Translator:
         """
         Translate text.
 
-        :param text: text to translate.
-        :param source_lang: source language.
-        :param target_lang: target language.
-        :param translate_type: translate type.
-        :param split: split text.
-        :param history: history.
-        :param xml: xml.
-        :param term_id: term id.
-        :param bilingual_id: bilingual id.
-        :param log_use: log use.
-        :param data: data.
+        :param: text: text to translate.
+        :param: source_lang: source language.
+        :param: target_lang: target language.
+        :param: translate_type: translate type.
+        :param: split: split text.
+        :param: history: history.
+        :param: xml: xml.
+        :param: term_id: term id.
+        :param: bilingual_id: bilingual id.
+        :param: log_use: log use.
+        :param: data: data.
 
         :return: translated text.
         """
         self.__check(text, translate_type, source_lang, target_lang)
 
-        url = f"{self.__DOMAIN}/api/mt/{translate_type}_{source_lang}_{target_lang}/"
-        request_data = dict(
-            access_token=self.__access_token,
-            key=self.__client_id,
-            name=self.__user_name,
-            type="json",
-            text=text,
-            split=split,
-            history=history,
-            xml=xml,
-            term_id=term_id,
-            bilingual_id=bilingual_id,
-            log_use=log_use,
-            data=data,
-        )
-        request_data = {k: v for k, v in request_data.items() if v is not None}
+        url = f"{self.__DOMAIN}/api/mt/{translate_type.value}_{source_lang}_{target_lang}/"
+        request_data = {
+            "access_token": self.__access_token,
+            "key": self.__client_id,
+            "name": self.__user_name,
+            "type": "json",
+            "text": text,
+            "split": split,
+            "history": history,
+            "xml": xml,
+            "term_id": term_id,
+            "bilingual_id": bilingual_id,
+            "log_use": log_use,
+            "data": data,
+        }
+        response_data = send_request(url, request_data)
 
-        response = request(url, data=request_data)
-        if response["resultset"]["code"] != 0:
-            raise ValueError(f"code: {response['resultset']['code']}, message: \"{response['resultset']['message']}\"")
-        return response["resultset"]["result"]["text"]
+        if response_data["resultset"]["code"] != 0:
+            raise ValueError(
+                f"code: {response_data['resultset']['code']}, message: \"{response_data['resultset']['message']}\""
+            )
+        return response_data["resultset"]["result"]["text"]
 
-    def __check(self, text: str, translate_type: str, source_lang: str, target_lang: str):
+    def __check(self, text: str, translate_type: TranslateType, source_lang: str, target_lang: str) -> None:
         if not self.__is_support_translate(translate_type, source_lang, target_lang):
             raise ValueError(
-                f"doesn't support. translate_type: {translate_type}, source_lang: {source_lang}"
-                f", target_lang: {target_lang}"
+                f"doesn't support. translate_type: {translate_type}, source_lang: {source_lang}, "
+                "target_lang: {target_lang}"
             )
-        if text is None or text == "":
+        if not text:
             raise ValueError("doesn't exist text")
 
     @classmethod
-    def __is_support_translate(cls, translate_type: str, src_lang: str, target_lang: str):
-        return (translate_type, src_lang, target_lang) in cls.__SUPPORT_TRANSLATE
+    def __is_support_translate(cls, translate_type: TranslateType, src_lang: str, target_lang: str) -> bool:
+        return (translate_type.value, src_lang, target_lang) in cls.__SUPPORT_TRANSLATE
 
-    @classmethod
-    def __get_access_token(cls, client_id: str, client_secret: str) -> str:
-        url = f"{cls.__DOMAIN}/oauth2/token.php"
-        client_data = {
-            "grant_type": "client_credentials",
-            "client_id": client_id,
-            "client_secret": client_secret,
-        }
-        response = request(url, data=client_data)
-        return response["access_token"]
