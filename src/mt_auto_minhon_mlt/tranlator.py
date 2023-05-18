@@ -124,4 +124,3 @@ class Translator:
     @classmethod
     def __is_support_translate(cls, translate_type: TranslateType, src_lang: str, target_lang: str) -> bool:
         return (translate_type.value, src_lang, target_lang) in cls.__SUPPORT_TRANSLATE
-
